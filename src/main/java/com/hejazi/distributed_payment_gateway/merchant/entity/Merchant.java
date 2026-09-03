@@ -3,10 +3,16 @@ package com.hejazi.distributed_payment_gateway.merchant.entity;
 import com.hejazi.distributed_payment_gateway.common.enums.BusinessType;
 import com.hejazi.distributed_payment_gateway.common.enums.MerchantStatus;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.UUID;
 @Entity
 @Table(name = "merchant")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Merchant {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

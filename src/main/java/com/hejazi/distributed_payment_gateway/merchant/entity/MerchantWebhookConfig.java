@@ -1,10 +1,16 @@
 package com.hejazi.distributed_payment_gateway.merchant.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.UUID;
 @Entity
 @Table(name = "merchant_webhook_config")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class MerchantWebhookConfig {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
