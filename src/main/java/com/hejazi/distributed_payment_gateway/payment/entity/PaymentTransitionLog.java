@@ -1,14 +1,21 @@
-package com.hejazi.distributed_payment_gateway.payment;
+package com.hejazi.distributed_payment_gateway.payment.entity;
 
 import com.hejazi.distributed_payment_gateway.common.enums.PaymentActor;
 import com.hejazi.distributed_payment_gateway.common.enums.PaymentEvent;
 import com.hejazi.distributed_payment_gateway.common.enums.PaymentStatus;
+import com.hejazi.distributed_payment_gateway.payment.entity.Payment;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 @Entity
 @Table(name = "payment_transition_log")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class PaymentTransitionLog {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

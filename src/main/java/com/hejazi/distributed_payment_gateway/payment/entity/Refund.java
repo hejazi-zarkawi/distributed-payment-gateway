@@ -1,8 +1,10 @@
-package com.hejazi.distributed_payment_gateway.payment;
+package com.hejazi.distributed_payment_gateway.payment.entity;
 
 import com.hejazi.distributed_payment_gateway.common.entity.Money;
 import com.hejazi.distributed_payment_gateway.common.enums.RefundStatus;
+import com.hejazi.distributed_payment_gateway.payment.entity.Payment;
 import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -11,6 +13,11 @@ import java.util.Map;
 import java.util.UUID;
 @Entity
 @Table(name = "refund")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Refund {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
