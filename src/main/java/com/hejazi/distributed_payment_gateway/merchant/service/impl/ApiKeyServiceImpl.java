@@ -7,6 +7,7 @@ import com.hejazi.distributed_payment_gateway.merchant.dto.response.ApiKeyRespon
 import com.hejazi.distributed_payment_gateway.merchant.dto.response.CreateApiKeyResponse;
 import com.hejazi.distributed_payment_gateway.merchant.entity.ApiKey;
 import com.hejazi.distributed_payment_gateway.merchant.entity.Merchant;
+import com.hejazi.distributed_payment_gateway.merchant.mapper.ApiKeyMapper;
 import com.hejazi.distributed_payment_gateway.merchant.repository.ApiKeyRepository;
 import com.hejazi.distributed_payment_gateway.merchant.repository.MerchantRepository;
 import com.hejazi.distributed_payment_gateway.merchant.service.ApiKeyService;
@@ -28,6 +29,7 @@ public class ApiKeyServiceImpl implements ApiKeyService {
 
     private final MerchantRepository merchantRepository;
     private final ApiKeyRepository apiKeyRepository;
+    private final ApiKeyMapper apiKeyMapper;
     @Override
     @Transactional
     public CreateApiKeyResponse create(UUID merchantId, CreateApiKeyRequest request) {
@@ -56,15 +58,7 @@ public class ApiKeyServiceImpl implements ApiKeyService {
         if (!merchantRepository.existsById(merchantId)) {
             throw new ResourceNotFoundException("merchant", merchantId);
         }
-        return apiKeyRepository.findByMerchant_Id(merchantId).stream()
-                .map(apiKey ->
-                        new ApiKeyResponse(
-                                apiKey.getId(),
-                                apiKey.getKeyId(),
-                                apiKey.getEnvironment(),
-                                apiKey.isEnabled(),
-                                apiKey.getLastUsedAt(), null))
-                .toList();
+        return apiKeyMapper.toResponseList(apiKeyRepository.findByMerchant_Id(merchantId));
     }
 
     @Override
@@ -83,6 +77,8 @@ public class ApiKeyServiceImpl implements ApiKeyService {
         ApiKey apiKey = apiKeyRepository.findById(keyId)
                 .filter(k -> k.getMerchant().getId().equals(merchantId))
                 .orElseThrow(() -> new ResourceNotFoundException("ApiKey", keyId));
+
+        if(!apiKey.isEnabled()) throw new RuntimeException("Cannot rotate a disabled key");
 
         String newRawSecret = RandomizerUtil.randomBase64(40);
         apiKey.setPreviousKeySecretHash(apiKey.getKeySecretHash());

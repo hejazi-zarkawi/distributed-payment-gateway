@@ -1,5 +1,6 @@
 package com.hejazi.distributed_payment_gateway.merchant.entity;
 
+import com.hejazi.distributed_payment_gateway.common.entity.BaseEntity;
 import com.hejazi.distributed_payment_gateway.common.enums.Environment;
 import jakarta.persistence.*;
 import lombok.*;
@@ -7,13 +8,16 @@ import lombok.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "api_key")
+@Table(name = "api_key",
+        indexes = {
+                @Index(name = "idx_api_key_merchant_env", columnList = "merchant_id, environment, enabled")
+        })
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ApiKey {
+public class ApiKey extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;

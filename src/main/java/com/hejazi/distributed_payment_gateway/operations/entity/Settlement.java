@@ -1,5 +1,6 @@
 package com.hejazi.distributed_payment_gateway.operations.entity;
 
+import com.hejazi.distributed_payment_gateway.common.entity.BaseEntity;
 import com.hejazi.distributed_payment_gateway.common.entity.Money;
 import com.hejazi.distributed_payment_gateway.common.enums.SettlementStatus;
 import jakarta.persistence.*;
@@ -8,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 @Entity
 @Table(name = "settlement")
-public class Settlement {
+public class Settlement extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;

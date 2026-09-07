@@ -1,5 +1,6 @@
 package com.hejazi.distributed_payment_gateway.payment.entity;
 
+import com.hejazi.distributed_payment_gateway.common.entity.BaseEntity;
 import com.hejazi.distributed_payment_gateway.common.entity.Money;
 import com.hejazi.distributed_payment_gateway.common.enums.OrderStatus;
 import jakarta.persistence.*;
@@ -11,13 +12,17 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 @Entity
-@Table(name = "order_record")
+@Table(name = "order_record",
+        indexes = {
+                @Index(name = "idx_order_id_merchant_id", columnList = "id, merchant_id"),
+                @Index(name = "idx_order_merchant_id", columnList = "merchant_id")
+        })
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OrderRecord {
+public class OrderRecord extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;

@@ -1,5 +1,6 @@
 package com.hejazi.distributed_payment_gateway.operations.entity;
 
+import com.hejazi.distributed_payment_gateway.common.entity.BaseEntity;
 import jakarta.persistence.*;
 @Entity
 @Table(name = "settlement_payment")

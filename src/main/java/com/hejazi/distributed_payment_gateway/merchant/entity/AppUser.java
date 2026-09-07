@@ -1,18 +1,22 @@
 package com.hejazi.distributed_payment_gateway.merchant.entity;
 
+import com.hejazi.distributed_payment_gateway.common.entity.BaseEntity;
 import com.hejazi.distributed_payment_gateway.common.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.UUID;
 @Entity
-@Table(name = "app_user")
+@Table(name = "app_user",
+        indexes = {
+                @Index(name = "idx_app_user_merchant_id", columnList = "merchant_id")
+        })
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AppUser {
+public class AppUser extends BaseEntity {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.UUID)
     private UUID id;

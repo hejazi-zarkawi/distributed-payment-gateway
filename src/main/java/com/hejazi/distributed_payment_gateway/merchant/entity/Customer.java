@@ -1,5 +1,6 @@
 package com.hejazi.distributed_payment_gateway.merchant.entity;
 
+import com.hejazi.distributed_payment_gateway.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -7,13 +8,17 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "customer")
+@Table(name = "customer",
+        indexes = {
+                @Index(name = "idx_customer_merchant_id", columnList = "merchant_id"),
+                @Index(name = "idx_customer_email", columnList = "email")
+        })
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Customer {
+public class Customer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;

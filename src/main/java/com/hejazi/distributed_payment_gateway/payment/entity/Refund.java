@@ -1,5 +1,6 @@
 package com.hejazi.distributed_payment_gateway.payment.entity;
 
+import com.hejazi.distributed_payment_gateway.common.entity.BaseEntity;
 import com.hejazi.distributed_payment_gateway.common.entity.Money;
 import com.hejazi.distributed_payment_gateway.common.enums.RefundStatus;
 import com.hejazi.distributed_payment_gateway.payment.entity.Payment;
@@ -18,7 +19,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Refund {
+public class Refund extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
