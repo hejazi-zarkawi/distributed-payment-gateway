@@ -5,7 +5,11 @@ import com.hejazi.distributed_payment_gateway.payment.dto.response.PaymentRespon
 import com.hejazi.distributed_payment_gateway.payment.gateway.dto.PaymentRequest;
 import com.hejazi.distributed_payment_gateway.payment.gateway.dto.PaymentResult;
 
+import java.util.UUID;
+
 public interface PaymentAdapter {
 
     PaymentResult initiate(PaymentRequest request);
+
+    PaymentResult capture(UUID paymentId);
 }
