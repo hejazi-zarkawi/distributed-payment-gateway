@@ -4,7 +4,9 @@ import com.hejazi.distributed_payment_gateway.common.util.RandomizerUtil;
 import com.hejazi.distributed_payment_gateway.payment.processor.PaymentProcessor;
 import com.hejazi.distributed_payment_gateway.payment.processor.dto.PaymentProcessorRequest;
 import com.hejazi.distributed_payment_gateway.payment.processor.dto.PaymentProcessorResponse;
+import org.springframework.stereotype.Component;
 
+@Component
 public class NetBankingPaymentProcessor implements PaymentProcessor {
     @Override
     public PaymentProcessorResponse charge(PaymentProcessorRequest request) {
@@ -22,8 +24,8 @@ public class NetBankingPaymentProcessor implements PaymentProcessor {
 
         String processorRef = "NBK_PROCESSOR_"+ RandomizerUtil.randomBase64(16);
 
-        String redirectRef = "http://REDIRECT_BANK.com/"+processorRef;
+//        String redirectRef = "http://REDIRECT_BANK.com/"+processorRef;
 
-        return new PaymentProcessorResponse.Success(processorRef, redirectRef);
+        return new PaymentProcessorResponse.Pending(processorRef);
     }
 }

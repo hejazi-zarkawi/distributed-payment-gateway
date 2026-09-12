@@ -2,11 +2,17 @@ package com.hejazi.distributed_payment_gateway.vault.entity;
 
 import com.hejazi.distributed_payment_gateway.common.entity.BaseEntity;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 @Entity
 @Table(name = "card_token")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class CardToken extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -26,4 +32,5 @@ public class CardToken extends BaseEntity {
     private UUID merchant;
 
     private LocalDateTime revokedAt;
+
 }

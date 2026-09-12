@@ -4,7 +4,9 @@ import com.hejazi.distributed_payment_gateway.common.util.RandomizerUtil;
 import com.hejazi.distributed_payment_gateway.payment.processor.PaymentProcessor;
 import com.hejazi.distributed_payment_gateway.payment.processor.dto.PaymentProcessorRequest;
 import com.hejazi.distributed_payment_gateway.payment.processor.dto.PaymentProcessorResponse;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UpiPaymentProcessor implements PaymentProcessor{
 
     @Override
@@ -23,8 +25,6 @@ public class UpiPaymentProcessor implements PaymentProcessor{
 
         String processorRef = "UPI_PROCESSOR_"+ RandomizerUtil.randomBase64(16);
 
-        String bankRef = "BANK_REF"+RandomizerUtil.randomBase64(16);
-
-        return new PaymentProcessorResponse.Success(processorRef, bankRef);
+        return new PaymentProcessorResponse.Pending(processorRef);
     }
 }
