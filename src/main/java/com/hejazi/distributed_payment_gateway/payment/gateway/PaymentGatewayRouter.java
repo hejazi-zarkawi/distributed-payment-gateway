@@ -30,5 +30,5 @@ public class PaymentGatewayRouter {
         }
         return adapter.capture(paymentId);
     }
-    }
+
 }
