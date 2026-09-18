@@ -1,5 +1,7 @@
 package com.hejazi.distributed_payment_gateway.common.exception;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,5 +35,33 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 ErrorResponse.of("VALIDATION_FAILED", "Request validation failed", fieldErrors));
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<ErrorResponse> handleExpiredJwt(
+            ExpiredJwtException ex) {
+
+        ErrorResponse errorResponse = ErrorResponse.of(
+                "JWT_EXPIRED",
+                "JWT token has expired"
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidJwt(
+            JwtException ex) {
+
+        ErrorResponse errorResponse = ErrorResponse.of(
+                "INVALID_JWT",
+                "Invalid JWT token"
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(errorResponse);
     }
 }

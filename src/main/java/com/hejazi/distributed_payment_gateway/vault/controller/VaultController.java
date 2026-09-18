@@ -1,5 +1,6 @@
 package com.hejazi.distributed_payment_gateway.vault.controller;
 
+import com.hejazi.distributed_payment_gateway.merchant.security.MerchantContext;
 import com.hejazi.distributed_payment_gateway.vault.dto.request.TokenizeRequest;
 import com.hejazi.distributed_payment_gateway.vault.dto.response.TokenizeResponse;
 import com.hejazi.distributed_payment_gateway.vault.service.VaultService;
@@ -20,12 +21,12 @@ import java.util.UUID;
 public class VaultController {
 
     private final VaultService vaultService;
-    UUID merchantId = UUID.fromString("5b162c2a-7b6c-42d9-bb38-2eec4856c1e4"); //TODO: replace it with MerchantContext
+    private final MerchantContext merchantContext;
 
 
     @PostMapping("/tokenize")
     public ResponseEntity<TokenizeResponse> tokenize(@Valid @RequestBody TokenizeRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(vaultService.tokenize(request, merchantId));
+                .body(vaultService.tokenize(request, merchantContext.getMerchantId()));
     }
 }

@@ -34,5 +34,6 @@ payment:
         max-delay-seconds: 10
         success-rate: 80
 
-
+jwt:
+  secret-key: dont-use-in-prod-a9________
 

@@ -1,5 +1,6 @@
 package com.hejazi.distributed_payment_gateway.payment.controller;
 
+import com.hejazi.distributed_payment_gateway.merchant.security.MerchantContext;
 import com.hejazi.distributed_payment_gateway.payment.dto.request.CreateOrderRequest;
 import com.hejazi.distributed_payment_gateway.payment.dto.response.OrderResponse;
 import com.hejazi.distributed_payment_gateway.payment.service.OrderService;
@@ -20,12 +21,12 @@ import java.util.UUID;
 public class OrderController {
 
     private final OrderService orderService;
-    UUID merchantId = UUID.fromString("266e7270-2f74-488c-b5c5-8d2fc7120de7"); //TODO: replace it with MerchantContext
+    private final MerchantContext merchantContext;
 
     @PostMapping
     public ResponseEntity<OrderResponse> create(@RequestBody @Valid CreateOrderRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(orderService.create(merchantId, request));
+                .body(orderService.create(merchantContext.getMerchantId(), request));
     }
 
 }
