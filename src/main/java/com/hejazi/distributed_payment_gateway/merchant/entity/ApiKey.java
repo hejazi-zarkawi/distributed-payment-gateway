@@ -5,6 +5,7 @@ import com.hejazi.distributed_payment_gateway.common.enums.Environment;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -47,4 +48,8 @@ public class ApiKey extends BaseEntity {
     private java.time.LocalDateTime lastUsedAt;
     private java.time.LocalDateTime rotatedAt;
     private java.time.LocalDateTime gracePeriodExpiresAt;
+
+    public boolean isInGracePeriod() {
+        return gracePeriodExpiresAt != null && LocalDateTime.now().isBefore(gracePeriodExpiresAt);
+    }
 }

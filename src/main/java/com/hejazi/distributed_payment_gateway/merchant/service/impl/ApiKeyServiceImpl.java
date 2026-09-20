@@ -2,6 +2,7 @@ package com.hejazi.distributed_payment_gateway.merchant.service.impl;
 
 import com.hejazi.distributed_payment_gateway.common.exception.ResourceNotFoundException;
 import com.hejazi.distributed_payment_gateway.common.util.RandomizerUtil;
+import com.hejazi.distributed_payment_gateway.merchant.cache.ApiKeyCache;
 import com.hejazi.distributed_payment_gateway.merchant.dto.request.CreateApiKeyRequest;
 import com.hejazi.distributed_payment_gateway.merchant.dto.response.ApiKeyResponse;
 import com.hejazi.distributed_payment_gateway.merchant.dto.response.CreateApiKeyResponse;
@@ -31,7 +32,8 @@ public class ApiKeyServiceImpl implements ApiKeyService {
     private final MerchantRepository merchantRepository;
     private final ApiKeyRepository apiKeyRepository;
     private final ApiKeyMapper apiKeyMapper;
-    private final PasswordEncoder passwordEncoder; // Assuming you have a PasswordEncoder bean for encoding the secret
+    private final PasswordEncoder passwordEncoder;
+    private final ApiKeyCache apiKeyCache;
     @Override
     @Transactional
     public CreateApiKeyResponse create(UUID merchantId, CreateApiKeyRequest request) {
@@ -71,6 +73,7 @@ public class ApiKeyServiceImpl implements ApiKeyService {
                 .orElseThrow(() -> new ResourceNotFoundException("ApiKey", keyId));
 
         key.setEnabled(false);
+        apiKeyCache.evict(key.getKeyId());
     }
 
     @Override
@@ -88,6 +91,8 @@ public class ApiKeyServiceImpl implements ApiKeyService {
         apiKey.setRotatedAt(LocalDateTime.now());
         apiKey.setGracePeriodExpiresAt(LocalDateTime.now().plusHours(24));
         apiKey = apiKeyRepository.save(apiKey);
+
+        apiKeyCache.evict(apiKey.getKeyId());
 
         return new CreateApiKeyResponse(apiKey.getId(), apiKey.getKeyId(),
                 newRawSecret, apiKey.getEnvironment());
