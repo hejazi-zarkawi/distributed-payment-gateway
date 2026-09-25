@@ -4,6 +4,7 @@ import com.hejazi.distributed_payment_gateway.common.enums.OrderStatus;
 import com.hejazi.distributed_payment_gateway.common.exception.BusinessRuleViolationException;
 import com.hejazi.distributed_payment_gateway.common.exception.DuplicateResourceException;
 import com.hejazi.distributed_payment_gateway.common.exception.ResourceNotFoundException;
+import com.hejazi.distributed_payment_gateway.merchant.service.CustomerService;
 import com.hejazi.distributed_payment_gateway.payment.dto.request.CreateOrderRequest;
 import com.hejazi.distributed_payment_gateway.payment.dto.response.OrderResponse;
 import com.hejazi.distributed_payment_gateway.payment.dto.response.PaymentResponse;
@@ -33,6 +34,7 @@ public class OrderServiceImpl implements OrderService {
 
         private final PaymentRepository paymentRepository;
         private final PaymentMapper paymentMapper;
+        private final CustomerService customerService;
 
         @Value("${payment.order.default-order-expiry-minutes:30}")
         private int defaultOrderExpiryMinutes;
@@ -44,12 +46,22 @@ public class OrderServiceImpl implements OrderService {
                 throw new DuplicateResourceException("ORDER_RECEIPT_DUPLICATE", "Order with receipt already exists: " + request.receipt());
             }
 
+            UUID customerId = null;
+            if (request.customer() != null) {
+                customerId = customerService.findOrCreate(merchantId,
+                        request.customer().email(),
+                        request.customer().name(),
+                        request.customer().phone()
+                );
+            }
+
             OrderRecord order = OrderRecord.builder()
                     .receipt(request.receipt())
                     .amount(request.amount())
                     .notes(request.notes())
 
                     .merchantId(merchantId)
+                    .customerId(customerId)
                     .orderStatus(OrderStatus.CREATED)
                     .expiresAt(request.expiresAt() != null ? request.expiresAt() :
                             LocalDateTime.now().plusMinutes(defaultOrderExpiryMinutes))
@@ -59,17 +71,12 @@ public class OrderServiceImpl implements OrderService {
 
 // TODO:        publish kafka event about order creation
 
-            return new OrderResponse(order.getId(),
-                    order.getMerchantId(),
-                    order.getReceipt(), order.getAmount(),
-                    order.getOrderStatus(), order.getAttempts(),
-                    order.getNotes(), order.getExpiresAt(),
-                    null);
+            return orderMapper.toResponse(order);
         }
 
     @Override
     public OrderResponse getById(UUID merchantId, UUID orderId) {
-        OrderRecord order = orderRepository.findByIdAndMerchantId(orderId, merchantId)
+         OrderRecord order = orderRepository.findByIdAndMerchantId(orderId, merchantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", orderId));
         return orderMapper.toResponse(order);
     }
