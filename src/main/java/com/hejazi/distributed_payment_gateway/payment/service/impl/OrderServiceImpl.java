@@ -1,5 +1,6 @@
 package com.hejazi.distributed_payment_gateway.payment.service.impl;
 
+import com.hejazi.distributed_payment_gateway.common.enums.EventAggregateType;
 import com.hejazi.distributed_payment_gateway.common.enums.OrderStatus;
 import com.hejazi.distributed_payment_gateway.common.exception.BusinessRuleViolationException;
 import com.hejazi.distributed_payment_gateway.common.exception.DuplicateResourceException;
@@ -12,6 +13,7 @@ import com.hejazi.distributed_payment_gateway.payment.entity.OrderRecord;
 import com.hejazi.distributed_payment_gateway.payment.entity.Payment;
 import com.hejazi.distributed_payment_gateway.payment.mapper.OrderMapper;
 import com.hejazi.distributed_payment_gateway.payment.mapper.PaymentMapper;
+import com.hejazi.distributed_payment_gateway.payment.outbox.OutboxEventPublisher;
 import com.hejazi.distributed_payment_gateway.payment.repository.OrderRepository;
 import com.hejazi.distributed_payment_gateway.payment.repository.PaymentRepository;
 import com.hejazi.distributed_payment_gateway.payment.service.OrderService;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -35,6 +38,7 @@ public class OrderServiceImpl implements OrderService {
         private final PaymentRepository paymentRepository;
         private final PaymentMapper paymentMapper;
         private final CustomerService customerService;
+        private final OutboxEventPublisher eventPublisher;
 
         @Value("${payment.order.default-order-expiry-minutes:30}")
         private int defaultOrderExpiryMinutes;
@@ -69,7 +73,14 @@ public class OrderServiceImpl implements OrderService {
 
             order = orderRepository.save(order);
 
-// TODO:        publish kafka event about order creation
+            eventPublisher.publish(EventAggregateType.ORDER, order.getId(), "ORDER_CREATED",
+                    Map.of("orderId", order.getId(),
+                            "merchantId", merchantId.toString(),
+                            "orderStatus", order.getOrderStatus().name(),
+                            "amountUnits", order.getAmount().getAmountUnits(),
+                            "amountCurrency", order.getAmount().getCurrency()
+                    )
+            );
 
             return orderMapper.toResponse(order);
         }
@@ -94,6 +105,15 @@ public class OrderServiceImpl implements OrderService {
 
         order.setOrderStatus(OrderStatus.CANCELLED);
         order = orderRepository.save(order);
+
+        eventPublisher.publish(EventAggregateType.ORDER, order.getId(), "ORDER_CANCELLED",
+                Map.of("orderId", order.getId(),
+                        "merchantId", merchantId.toString(),
+                        "orderStatus", order.getOrderStatus().name(),
+                        "amountUnits", order.getAmount().getAmountUnits(),
+                        "amountCurrency", order.getAmount().getCurrency()
+                )
+        );
 
         return orderMapper.toResponse(order);
     }
