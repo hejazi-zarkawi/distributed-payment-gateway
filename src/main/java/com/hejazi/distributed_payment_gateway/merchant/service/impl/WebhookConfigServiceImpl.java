@@ -3,7 +3,7 @@ package com.hejazi.distributed_payment_gateway.merchant.service.impl;
 import com.hejazi.distributed_payment_gateway.common.dto.WebhookTarget;
 import com.hejazi.distributed_payment_gateway.common.exception.ResourceNotFoundException;
 import com.hejazi.distributed_payment_gateway.common.util.RandomizerUtil;
-import com.hejazi.distributed_payment_gateway.merchant.api.MerchantWebhookApi;
+import com.hejazi.distributed_payment_gateway.merchant.api.MerchantLookupService;
 import com.hejazi.distributed_payment_gateway.merchant.dto.request.UpdateWebhookConfigRequest;
 import com.hejazi.distributed_payment_gateway.merchant.dto.response.WebhookConfigResponse;
 import com.hejazi.distributed_payment_gateway.merchant.entity.Merchant;
@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.encrypt.BytesEncryptor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.w3c.dom.stylesheets.LinkStyle;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -27,7 +26,7 @@ import java.util.UUID;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class WebhookConfigServiceImpl implements WebhookConfigService, MerchantWebhookApi {
+public class WebhookConfigServiceImpl implements WebhookConfigService {
     private final MerchantRepository merchantRepository;
     private final WebhookConfigRepository merchantWebhookConfigRepository;
     private final BytesEncryptor bytesEncryptor;
@@ -93,18 +92,7 @@ public class WebhookConfigServiceImpl implements WebhookConfigService, MerchantW
                 .orElseThrow(() -> new ResourceNotFoundException("MerchantWebhookConfig", configId));
     }
 
-    @Override
-    public List<WebhookTarget> getActiveConfigsForEvent(UUID merchantId, String eventType) {
-        return merchantWebhookConfigRepository.findByMerchant_IdAndEnabledTrue(merchantId).stream()
-                .filter(config -> config.isSubscribedTo(eventType))
-                .map(config -> {
-                    byte[] cipherBytes = Base64.getDecoder().decode(config.getWebhookSecret());
-                    byte[] decryptedSecretBytes = bytesEncryptor.decrypt(cipherBytes);
-                    return new WebhookTarget(config.getId(), config.getTargetUrl(),
-                            new String(decryptedSecretBytes, StandardCharsets.UTF_8));
-                })
-                .toList();
-    }
+
 
 
 }

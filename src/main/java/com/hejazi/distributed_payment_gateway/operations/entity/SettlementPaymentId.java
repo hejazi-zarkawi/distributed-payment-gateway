@@ -2,9 +2,15 @@ package com.hejazi.distributed_payment_gateway.operations.entity;
 
 import com.hejazi.distributed_payment_gateway.common.entity.BaseEntity;
 import jakarta.persistence.Embeddable;
+import lombok.*;
 
 import java.util.UUID;
 @Embeddable
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
 public class SettlementPaymentId  {
     private UUID settlementId;
 

@@ -41,13 +41,13 @@ spring:
         spring.json.trusted.packages: "com.hejazi.distributed_payment_gateway.*"
         spring.json.use.type.headers: false
         spring.json.value.default.type: java.util.LinkedHashMap
+  threads:
+    virtual:
+      enabled: true
 
 vault:
   master-key: ......
 
-threads:
-  virtual:
-    enabled: true
 
 payment:
   simulator:
