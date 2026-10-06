@@ -20,6 +20,7 @@ This project focuses on implementing concepts commonly required in a reliable pa
 - Concurrency handling
 - Idempotency
 - Distributed transactions
+- T+1 settlement processing
 - Event-driven architecture
 - Webhook-based notifications
 - Redis caching
@@ -55,6 +56,10 @@ This project focuses on implementing concepts commonly required in a reliable pa
 - Cancel order
 - Order idempotency
 - Order rate limiting
+- Customer ID integration
+- Redis caching
+- Transaction management
+- Pessimistic locking
 
 ### Payment Processing
 
@@ -62,21 +67,78 @@ This project focuses on implementing concepts commonly required in a reliable pa
 - Payment authorization
 - Payment capture
 - Payment state machine
-- Strategy pattern for different payment methods
+- Payment transition service
+- Strategy Pattern for payment methods
 - Card payment processing
 - UPI payment processing
 - Net banking payment processing
 - Vault card integration
+- Card tokenization
+- Customer integration
 - Bank simulation
+- Transaction management
+- Pessimistic locking
 
-### Performance & Reliability
+### Webhook Processing
+
+- Kafka-based webhook event consumption
+- Webhook event persistence
+- Redis-based event queuing
+- Scheduler-based webhook processing
+- Webhook delivery to merchant servers
+- Merchant response handling
+- Webhook delivery status tracking
+- Failed webhook retry mechanism
+- Database polling for pending webhook events
+
+### Event-Driven Architecture
+
+- Apache Kafka producer and consumer
+- Transactional Outbox Pattern
+- Kafka-based asynchronous event processing
+- Webhook event propagation
+- Redis-backed event queue
+- Scheduler-based event processing
+
+### Reliability & Fault Tolerance
+
+- Idempotency
+- Rate limiting
+- Redis caching
+- Transaction management
+- Pessimistic locking
+- Transactional Outbox Pattern
+- Webhook retry mechanism
+- Failed-event recovery through database polling
+- Dead Letter Queue support
+
+### Settlement
+
+- T+1 payment settlement
+- Settlement payment tracking
+- Merchant settlement processing
+- Settlement state management
+
+### Performance
 
 - Redis caching
-- Rate limiting
-- Idempotency
+- API rate limiting
 - Database indexes
-- Auditing
-- MapStruct-based entity/DTO mapping
+
+### Consistency & Concurrency
+
+- Transaction management
+- Pessimistic locking
+- Idempotency
+- Database auditing
+- Customer/order/payment consistency
+
+### Reliability
+
+- Transactional Outbox Pattern
+- Kafka asynchronous processing
+- Webhook retry mechanism
+- Failed-event recovery through database polling
 
 ## 🛠️ Tech Stack
 
@@ -117,6 +179,38 @@ The long-term architecture will evolve toward a **distributed microservices arch
 
 Architecture diagrams, service boundaries, payment flows, and event flows will be documented as the system evolves.
 
+## 🔄 Payment Flow
+
+```text
+Client
+  ↓
+Order Creation
+  ↓
+Payment Initiation
+  ↓
+Payment Authorization
+  ↓
+Payment Capture
+  ↓
+Outbox Event
+  ↓
+Kafka
+  ↓
+Webhook Event
+  ↓
+Redis Queue
+  ↓
+Webhook Scheduler
+  ↓
+Merchant Server
+  ↓
+Webhook Delivered
+  ↓
+T+1 Settlement
+  ↓
+Merchant Account
+```
+
 ## 📖 Development Approach
 
 The project is developed incrementally.
@@ -127,17 +221,15 @@ Git commits track individual development changes, while Git tags are used to mar
 
 ## 🔮 Planned Development
 
-- Webhook processing
-- Kafka event-driven communication
-- Payment retry mechanisms
-- Dead Letter Queue (DLQ)
-- Settlement processing
 - Advanced failure handling
 - Distributed locking
 - Observability
-- Microservices decomposition
 - API Gateway
+- Microservices decomposition
+- Service discovery
+- Centralized configuration
 - Performance and load testing
+- Distributed tracing
 
 ## ⚠️ Disclaimer
 
